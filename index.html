@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AddOrDrop.com — Fantasy Football Tools That Know Your Team</title>
+  <meta name="description" content="5 personalized fantasy football tools. Waiver Wire, Trade Analyzer, Start/Sit, Pre-Draft Strategy, and On The Clock. Built around your roster. Get your answer in under 60 seconds. $9.99/season." />
+  <meta property="og:title" content="AddOrDrop.com: Fantasy Football Tools That Know Your Team" />
+  <meta property="og:description" content="No noise. No rankings. Just answers. Personalized fantasy football analysis for every decision this season, built around your actual roster." />
+  <meta property="og:url" content="https://addordrop.com" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AddOrDrop.com: Fantasy Football Tools That Know Your Team" />
+  <meta name="twitter:description" content="No noise. No rankings. Just answers." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0B0C0F;
+      --surface: #131417;
+      --surface2: #1C1E24;
+      --border: #232529;
+      --text: #F2F2F2;
+      --muted: #666;
+      --accent: #AAFF47;
+      --yellow: #FFD23F;
+      --blue: #5B8DEF;
+      --orange: #FF8C42;
+      --purple: #C084FC;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid transparent;
+      transition: all 0.3s ease;
+    }
+    nav.scrolled {
+      background: rgba(11, 12, 15, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom-color: var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo .green { color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-app-link {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-app-link:hover { color: var(--text); }
+    .btn-primary {
+      background: var(--accent);
+      color: #0B0C0F;
+      border: none;
+      padding: 10px 22px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 130px 24px 90px;
+      position: relative;
+    }
+    .hero-glow {
+      position: absolute;
+      top: 18%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(170, 255, 71, 0.06) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(170, 255, 71, 0.08);
+      border: 1px solid rgba(170, 255, 71, 0.22);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      border-radius: 100px;
+      margin-bottom: 36px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-eyebrow-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(58px, 10vw, 130px);
+      line-height: 0.93;
+      letter-spacing: 2px;
+      margin-bottom: 28px;
+      max-width: 960px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 .green { color: var(--accent); }
+    .hero-sub {
+      font-size: clamp(16px, 1.8vw, 19px);
+      color: #8a8a8a;
+      max-width: 520px;
+      line-height: 1.65;
+      margin-bottom: 52px;
+      font-weight: 400;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-sub strong { color: #ccc; font-weight: 600; }
+
+    .form-wrap { position: relative; z-index: 1; width: 100%; max-width: 500px; }
+    .email-form {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .email-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .email-input:focus {
+      border-color: rgba(170, 255, 71, 0.5);
+      box-shadow: 0 0 0 3px rgba(170, 255, 71, 0.07);
+    }
+    .email-input::placeholder { color: var(--muted); }
+    .btn-waitlist {
+      background: var(--accent);
+      color: #0B0C0F;
+      border: none;
+      padding: 14px 26px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      letter-spacing: 0.2px;
+    }
+    .btn-waitlist:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-waitlist:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .form-note { font-size: 12.5px; color: var(--muted); }
+    .form-note strong { color: var(--accent); font-weight: 600; }
+
+    .form-success {
+      display: none;
+      background: rgba(170, 255, 71, 0.08);
+      border: 1px solid rgba(170, 255, 71, 0.25);
+      color: var(--accent);
+      padding: 16px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ─── TRUST BAR ─── */
+    .trust-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 18px 36px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #999;
+      border-right: 1px solid var(--border);
+    }
+    .trust-item:last-child { border-right: none; }
+    .trust-item strong { color: var(--text); font-weight: 600; }
+    .trust-icon { font-size: 15px; }
+
+    /* ─── SHARED SECTION STYLES ─── */
+    .section {
+      padding: 100px 48px;
+      max-width: 1160px;
+      margin: 0 auto;
+    }
+    .section-full {
+      padding: 100px 48px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .section-full-inner { max-width: 1160px; margin: 0 auto; }
+
+    .section-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .section h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 0.97;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+    .section-sub {
+      font-size: 17px;
+      color: #777;
+      max-width: 500px;
+      line-height: 1.65;
+    }
+
+    /* ─── COMPARE ─── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .compare-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px;
+    }
+    .compare-card.bad { border-color: rgba(255, 75, 75, 0.18); }
+    .compare-card.good { border-color: rgba(170, 255, 71, 0.18); }
+    .compare-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      margin-bottom: 26px;
+    }
+    .compare-card.bad h3 { color: #f05252; }
+    .compare-card.good h3 { color: var(--accent); }
+    .compare-list { list-style: none; display: flex; flex-direction: column; gap: 15px; }
+    .compare-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14.5px;
+      color: #aaa;
+      line-height: 1.45;
+    }
+    .check {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+    .bad .check { background: rgba(240, 82, 82, 0.12); color: #f05252; }
+    .good .check { background: rgba(170, 255, 71, 0.12); color: var(--accent); }
+
+    /* ─── TOOLS ─── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 56px;
+    }
+    .tools-grid .tool-card:nth-child(4) { grid-column: 1; }
+    .tools-grid .tool-card:nth-child(5) { grid-column: 2; }
+
+    .tool-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px 28px;
+      transition: transform 0.25s, border-color 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--tool-color);
+      opacity: 0.8;
+    }
+    .tool-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse at top left, var(--tool-color), transparent 65%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .tool-card:hover { transform: translateY(-4px); border-color: var(--tool-color); }
+    .tool-card:hover::after { opacity: 0.04; }
+    .tool-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .tool-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1px;
+      color: var(--tool-color);
+      margin-bottom: 9px;
+    }
+    .tool-desc { font-size: 13.5px; color: #777; line-height: 1.55; }
+    .tool-badge {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--tool-color);
+      border: 1px solid var(--tool-color);
+      padding: 4px 10px;
+      border-radius: 100px;
+      opacity: 0.6;
+    }
+
+    /* ─── WHY ─── */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .why-card {
+      padding: 34px 30px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .why-icon { font-size: 28px; margin-bottom: 16px; }
+    .why-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .why-card p { font-size: 14px; color: #777; line-height: 1.65; }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .t-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+    }
+    .t-stars { color: var(--yellow); font-size: 13px; margin-bottom: 14px; letter-spacing: 1px; }
+    .t-text {
+      font-size: 14.5px;
+      color: #bbb;
+      line-height: 1.7;
+      margin-bottom: 22px;
+      font-style: italic;
+    }
+    .t-author { display: flex; align-items: center; gap: 11px; }
+    .t-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .t-name { font-weight: 600; font-size: 13.5px; }
+    .t-handle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ─── PRICING CALLOUT ─── */
+    .pricing-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 64px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-top: 0;
+    }
+    .pricing-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .pricing-box::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 400px; height: 250px;
+      background: radial-gradient(ellipse, rgba(170,255,71,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .price-big {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 96px;
+      color: var(--accent);
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+    }
+    .price-line { font-size: 15px; color: #666; margin: 8px 0 4px; position: relative; z-index: 1; }
+    .price-note { font-size: 14px; color: #555; margin-bottom: 32px; position: relative; z-index: 1; }
+    .price-note s { text-decoration-color: #444; }
+
+    /* ─── FAQ ─── */
+    .faq-list { margin-top: 56px; display: flex; flex-direction: column; gap: 8px; }
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 22px 28px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: background 0.2s;
+    }
+    .faq-q:hover { background: var(--surface2); }
+    .faq-chevron { color: var(--muted); font-size: 16px; transition: transform 0.3s; flex-shrink: 0; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-inner { padding: 0 28px 22px; font-size: 14.5px; color: #888; line-height: 1.75; }
+    .faq-item.open .faq-answer { max-height: 220px; }
+
+    /* ─── BOTTOM CTA ─── */
+    .cta-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 110px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 350px;
+      background: radial-gradient(ellipse, rgba(170,255,71,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(44px, 6.5vw, 88px);
+      line-height: 0.95;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-section h2 .green { color: var(--accent); }
+    .cta-sub {
+      font-size: 17px;
+      color: #777;
+      max-width: 440px;
+      margin: 0 auto 44px;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 28px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 24px; }
+
+    /* ─── FADE UP ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .tools-grid { grid-template-columns: 1fr 1fr; }
+      .tools-grid .tool-card:nth-child(4),
+      .tools-grid .tool-card:nth-child(5) { grid-column: auto; }
+      .why-grid { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      nav { padding: 16px 20px; }
+      .nav-app-link { display: none; }
+      .section, .cta-section { padding: 72px 20px; }
+      .section-full { padding: 72px 20px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .tools-grid { grid-template-columns: 1fr; }
+      .why-grid { grid-template-columns: 1fr; }
+      .trust-bar { flex-wrap: wrap; padding: 16px 20px; gap: 8px; justify-content: flex-start; }
+      .trust-item { border-right: none; padding: 8px 14px; background: var(--surface2); border-radius: 100px; font-size: 12.5px; }
+      .email-form { flex-direction: column; }
+      footer { flex-direction: column; gap: 16px; text-align: center; padding: 24px 20px; }
+      .footer-links { flex-wrap: wrap; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">ADD<span class="green">OR</span>DROP</a>
+    <div class="nav-right">
+      <a href="#waitlist" class="btn-primary">Join the Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      Launching August 1st, 2026
+    </div>
+    <h1>Stop Guessing.<br><span class="green">Start Winning.</span></h1>
+    <p class="hero-sub">
+      Personalized analysis for every fantasy decision this season.
+      <strong>waiver wire, trades, start/sit, drafts.</strong>
+      Under 60 seconds. No noise. Just answers.
+    </p>
+    <div class="form-wrap">
+      <div class="form-success" id="hero-success">
+        🎉 You're on the list! Check your inbox — we'll see you August 1st.
+      </div>
+      <form class="email-form" id="hero-form" onsubmit="handleSubmit(event,'hero')">
+        <input type="email" class="email-input" placeholder="your@email.com" required autocomplete="email" />
+        <button type="submit" class="btn-waitlist" id="hero-btn">Lock In Early Access</button>
+      </form>
+      <p class="form-note">First 100 users lock in <strong>$9.99/season</strong>. Price goes to $19.99 after that.</p>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-item"><span class="trust-icon">⚡</span> <span><strong>5 Tools</strong>, one place</span></div>
+    <div class="trust-item"><span class="trust-icon">⏱</span> <span>Answers in <strong>&lt;60 seconds</strong></span></div>
+    <div class="trust-item"><span class="trust-icon">🎯</span> <span><strong>Built around</strong> your roster</span></div>
+    <div class="trust-item"><span class="trust-icon">💸</span> <span><strong>$9.99</strong> for the whole season</span></div>
+    <div class="trust-item"><span class="trust-icon">🆓</span> <span><strong>Free trial</strong> on every tool</span></div>
+  </div>
+
+  <!-- PROBLEM / SOLUTION -->
+  <section class="section" id="why">
+    <p class="section-label fade-up">The Problem</p>
+    <h2 class="fade-up">Everyone has opinions.<br>Nobody has <em>your</em> team.</h2>
+    <p class="section-sub fade-up">Generic rankings sites don't know your roster, your league settings, or your matchup. They never have. You end up spending more time researching than playing.</p>
+
+    <div class="compare-grid fade-up">
+      <div class="compare-card bad">
+        <h3>✕ The Old Way</h3>
+        <ul class="compare-list">
+          <li><span class="check">✕</span> 45 minutes of Reddit rabbit holes</li>
+          <li><span class="check">✕</span> Podcast opinions that ignore your roster</li>
+          <li><span class="check">✕</span> Generic rankings with zero context</li>
+          <li><span class="check">✕</span> Six browser tabs, still not sure</li>
+          <li><span class="check">✕</span> Regret the call Sunday afternoon</li>
+        </ul>
+      </div>
+      <div class="compare-card good">
+        <h3>✓ The AddOrDrop Way</h3>
+        <ul class="compare-list">
+          <li><span class="check">✓</span> Upload your roster, get a real answer</li>
+          <li><span class="check">✓</span> Analysis built around your actual situation</li>
+          <li><span class="check">✓</span> No ads, no fluff, no conflicting hot takes</li>
+          <li><span class="check">✓</span> One place for every decision all season</li>
+          <li><span class="check">✓</span> Decision made. Tab closed. Life resumed.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <div class="section-full" id="tools">
+    <div class="section-full-inner">
+      <p class="section-label fade-up">The Tools</p>
+      <h2 class="fade-up">Five tools.<br>Every decision covered.</h2>
+      <p class="section-sub fade-up">From the waiver wire to draft day. One platform handles the entire season.</p>
+
+      <div class="tools-grid fade-up">
+
+        <div class="tool-card" style="--tool-color: #AAFF47;">
+          <div class="tool-num">01</div>
+          <div class="tool-name">Waiver Wire</div>
+          <p class="tool-desc">Snap a screenshot of your waiver wire. Get a ranked, prioritized list of pickups built around your specific roster needs, not some Tuesday morning list.</p>
+          <span class="tool-badge">Free Trial</span>
+        </div>
+
+        <div class="tool-card" style="--tool-color: #FFD23F;">
+          <div class="tool-num">02</div>
+          <div class="tool-name">Trade Analyzer</div>
+          <p class="tool-desc">Accept, decline, or counteroffer. Full reasoning based on your league context and roster shape. Know exactly what you're getting into before you click accept.</p>
+          <span class="tool-badge">Free Trial</span>
+        </div>
+
+        <div class="tool-card" style="--tool-color: #5B8DEF;">
+          <div class="tool-num">03</div>
+          <div class="tool-name">Start / Sit</div>
+          <p class="tool-desc">The hardest weekly call, made simple. Upload your roster, get a clear start/sit recommendation with real reasoning. Not just a name.</p>
+          <span class="tool-badge">Free Trial</span>
+        </div>
+
+        <div class="tool-card" style="--tool-color: #FF8C42;">
+          <div class="tool-num">04</div>
+          <div class="tool-name">Pre-Draft Strategy</div>
+          <p class="tool-desc">Know your game plan before a single pick is made. Builds a personalized round-by-round strategy based on your draft position and league format.</p>
+          <span class="tool-badge">Free Trial</span>
+        </div>
+
+        <div class="tool-card" style="--tool-color: #C084FC;">
+          <div class="tool-num">05</div>
+          <div class="tool-name">On The Clock</div>
+          <p class="tool-desc">Live draft pick advisor. Real-time analysis of who to take with your pick, based on who's left on the board and exactly what your team needs.</p>
+          <span class="tool-badge">1 Free Full Draft</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- WHY DIFFERENT -->
+  <section class="section" id="different">
+    <p class="section-label fade-up">Why It's Different</p>
+    <h2 class="fade-up">Built around you.<br>Not the masses.</h2>
+
+    <div class="why-grid fade-up">
+      <div class="why-card">
+        <div class="why-icon">🎯</div>
+        <h3>It Knows Your Team</h3>
+        <p>Every answer is built around your actual roster, your league settings, and your specific matchup. Not a one-size-fits-all ranking that was written before your situation even existed.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">⚡</div>
+        <h3>Under 60 Seconds</h3>
+        <p>No rabbit holes. No noise. You drop in your situation, it analyzes your matchup and roster, you get a clear answer with reasoning. Then you close the tab and move on with your life.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">💰</div>
+        <h3>One Price. Everything.</h3>
+        <p>$9.99 for the entire season. All five tools. No upsells, no feature tiers, no subscriptions inside subscriptions. Simple, honest pricing. The way it should be.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <div class="section-full" id="proof">
+    <div class="section-full-inner">
+      <p class="section-label fade-up">Early Feedback</p>
+      <h2 class="fade-up">Real people.<br>Real results.</h2>
+
+      <div class="testimonials-grid fade-up">
+        <div class="t-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"I used the trade analyzer before a huge move in my 12-team league. It broke down the deal better than anything I'd read on Reddit, and I ended up finishing 2nd. Would've passed on it without AddOrDrop."</p>
+          <div class="t-author">
+            <div class="t-avatar">🏈</div>
+            <div>
+              <div class="t-name">Mike T.</div>
+              <div class="t-handle">12-team PPR · Early tester</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"The start/sit tool saved me week 9 when I had no idea who to start at flex. It didn't just give me a name. It explained the matchup in a way that actually made sense. That's the difference."</p>
+          <div class="t-author">
+            <div class="t-avatar">🏆</div>
+            <div>
+              <div class="t-name">Jordan K.</div>
+              <div class="t-handle">10-team standard · Early tester</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"Honestly just refreshing to use a tool with no ads and no upsells. You put in your situation, you get an answer, you close the tab. That's exactly what I needed and it's exactly what this does."</p>
+          <div class="t-author">
+            <div class="t-avatar">🎯</div>
+            <div>
+              <div class="t-name">Sam R.</div>
+              <div class="t-handle">8-team dynasty · Early tester</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <section class="section">
+    <div class="pricing-box fade-up">
+      <p class="section-label" style="margin-bottom: 10px;">Pricing</p>
+      <div class="price-big">$9.99</div>
+      <p class="price-line">per season &nbsp;·&nbsp; all 5 tools &nbsp;·&nbsp; free trials on every tool</p>
+      <p class="price-note">Early access rate. Goes to <s>$19.99</s> after the first 100 users.</p>
+      <a href="#waitlist" class="btn-primary" style="font-size: 15px; padding: 14px 34px;">Lock In $9.99 →</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <p class="section-label fade-up">FAQ</p>
+    <h2 class="fade-up">Good questions.</h2>
+
+    <div class="faq-list fade-up">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>What fantasy platforms does AddOrDrop support?</span>
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-inner">Any league: ESPN, Yahoo, Sleeper, NFL.com, or custom. Just upload a screenshot of your roster and we handle the rest. No account linking, no OAuth, no hassle.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>What does "1 free trial per tool" actually mean?</span>
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-inner">You can try every tool for free, once, no credit card needed. After your first use of each tool, you'll need to subscribe to continue. On The Clock is even more generous: one free complete draft session, regardless of how many picks you make.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Is the $9.99 price locked in forever?</span>
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-inner">The first 100 users who sign up after launch lock in $9.99/season for as long as they stay active. After that, the price moves to $19.99. Being on the waitlist puts you in that early window when we go live on August 1st.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>What does "per season" mean exactly?</span>
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-inner">One season covers the full NFL year, roughly September through February. Your subscription renews annually and your free trials reset each season. One payment, every decision, the whole year.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>When exactly does it launch?</span>
+          <span class="faq-chevron">▾</span>
+        </button>
+        <div class="faq-answer">
+          <div class="faq-inner">August 1st, 2026, right before the NFL preseason and draft season kicks off. Everyone on the waitlist will get an email the day we go live. You won't miss it.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="cta-section" id="waitlist">
+    <div class="cta-glow"></div>
+    <div style="position: relative; z-index: 1;">
+      <p class="section-label" style="margin-bottom: 18px;">Get Early Access</p>
+      <h2>This Season,<br>You're <span class="green">Prepared.</span></h2>
+      <p class="cta-sub">Join the waitlist. Be first through the door on August 1st. Lock in $9.99 before the window closes.</p>
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="form-success" id="bottom-success" style="max-width: 460px; width: 100%;">
+          🎉 You're on the list! Check your inbox — we'll see you August 1st.
+        </div>
+        <form class="email-form" id="bottom-form" onsubmit="handleSubmit(event,'bottom')" style="max-width: 460px; width: 100%; margin-bottom: 14px;">
+          <input type="email" class="email-input" placeholder="your@email.com" required autocomplete="email" />
+          <button type="submit" class="btn-waitlist" id="bottom-btn">Join Waitlist</button>
+        </form>
+        <p class="form-note">No spam. One email when we launch. That's it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="#" class="nav-logo" style="font-size: 18px; letter-spacing: 2px;">ADD<span class="green">OR</span>DROP</a>
+    <div class="footer-links">
+      <a href="/terms.html">Terms of Service</a>
+      <a href="/privacy.html">Privacy Policy</a>
+    </div>
+    <span>© 2026 Blank Studio LLC</span>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Sticky nav shadow
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // Scroll-triggered fade-up
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // FAQ accordion
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    }
+
+    // Waitlist form submit
+    async function handleSubmit(e, formId) {
+      e.preventDefault();
+      const form = e.target;
+      const email = form.querySelector('input[type="email"]').value.trim();
+      const btn = document.getElementById(`${formId}-btn`);
+      const successEl = document.getElementById(`${formId}-success`);
+
+      btn.disabled = true;
+      btn.textContent = 'Joining...';
+
+      try {
+        const res = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source: formId })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          form.style.display = 'none';
+          successEl.style.display = 'block';
+        } else {
+          throw new Error('bad response');
+        }
+      } catch {
+        btn.disabled = false;
+        btn.textContent = formId === 'hero' ? 'Lock In Early Access' : 'Join Waitlist';
+      }
+    }
+  </script>
+</body>
+</html>
